@@ -9,8 +9,30 @@
 ## 使用方法
 
 ```shell
-cd src
-python do_on_fix.py --config example.yml # 记得先填写配置文件。
+python src/backporting.py --config src/example.yml # 记得先填写配置文件。
+```
+
+## Codex Skill
+
+仓库内置了一个本地 Codex skill：`skills/retropatch-engineering/`。
+
+在下面这些 RetroPatch 特定任务里，优先使用 `$retropatch-engineering`：
+
+- 修改 `src/backporting.py`、`src/agent/`、`src/tools/` 下的回移主流程
+- 修改 `src/prejudge/` 下的预判流程
+- 修改依赖本仓库工作流的配置、prompt、验证逻辑、测试或 README
+
+示例 prompt：
+
+```text
+Use $retropatch-engineering to update the prejudge pipeline and keep the docs in sync.
+```
+
+在声明本地环境可运行之前，先执行：
+
+```shell
+python3 skills/retropatch-engineering/scripts/check_setup.py
+python3 skills/retropatch-engineering/scripts/check_setup.py --config path/to/config.yml
 ```
 
 ## Docker 使用方法
@@ -26,15 +48,16 @@ docker build -t patch-backporting .
 ```shell
 # 请确保挂载了必要的目录（代码、配置文件、数据集）
 # 示例：假设 config.yml 位于当前目录，数据集位于 /data
-docker run --rm -v $(pwd):/app/src -v /path/to/dataset:/path/to/dataset patch-backporting python backporting.py --config config.yml
+docker run --rm -v $(pwd):/app -v /path/to/dataset:/path/to/dataset patch-backporting python backporting.py --config example.yml
 ```
 
 或者，也可以使用交互模式在容器内执行脚本：
 
 ```shell
-docker run --rm -it -v $(pwd):/app/src -v /path/to/dataset:/path/to/dataset patch-backporting /bin/bash
+docker run --rm -it -v $(pwd):/app -v /path/to/dataset:/path/to/dataset patch-backporting /bin/bash
 # 在容器内部执行
-python backporting.py --config config.yml
+cd /app/src
+python backporting.py --config example.yml
 ```
 
 ## 配置结构
